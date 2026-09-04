@@ -61,11 +61,11 @@ Validation rules are implemented in [`src/used_car_intelligence/pipeline.py`](sr
 
 ## Exploratory Data Analysis
 
-![Median price by brand](reports/figures/median_price_by_brand.png)
+![Median price by brand](reports/figures/median_price_by_brand.svg)
 
-![Price versus mileage](reports/figures/price_vs_mileage.png)
+![Price versus mileage](reports/figures/price_vs_mileage.svg)
 
-![Median price by vehicle age](reports/figures/depreciation_curve.png)
+![Median price by vehicle age](reports/figures/depreciation_curve.svg)
 
 ## Key Insights — Development Validation
 
@@ -95,9 +95,9 @@ The same train/test split is used for all models.
 | Linear regression | £1,617 | £2,157 | 0.850 |
 | Random forest | **£1,473** | **£2,040** | **0.866** |
 
-![Model comparison](reports/figures/model_mae.png)
+![Model comparison](reports/figures/model_mae.svg)
 
-![Feature importance](reports/figures/feature_importance.png)
+![Feature importance](reports/figures/feature_importance.svg)
 
 These figures validate the pipeline on the development snapshot only. The repository intentionally avoids presenting them as full-dataset performance.
 
@@ -114,7 +114,7 @@ The validation run demonstrates that structured vehicle attributes can materiall
 
 ## Dashboard
 
-A Streamlit application is available in [`dashboard/app.py`](dashboard/app.py). A build-validated interactive Plotly version is also included at [`dashboard/dashboard.html`](dashboard/dashboard.html).
+A Streamlit application is available in [`dashboard/app.py`](dashboard/app.py) for interactive filtering, KPI review and model-validation exploration.
 
 Run Streamlit with:
 
