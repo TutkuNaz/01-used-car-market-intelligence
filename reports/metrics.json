@@ -1,0 +1,42 @@
+{
+  "data_quality": {
+    "rows_raw": 299,
+    "rows_clean": 299,
+    "duplicates_removed": 0,
+    "null_cells_raw": 0,
+    "invalid_rows_removed": 0
+  },
+  "median_price": 16520.0,
+  "median_mileage": 28277.0,
+  "brand_count": 6,
+  "model_count": 30,
+  "highest_median_price_brand": "Mercedes",
+  "highest_median_price": 19470.0,
+  "lowest_median_price_brand": "Hyundai",
+  "lowest_median_price": 11055.0,
+  "age_range": [0, 7],
+  "median_price_youngest_age": 20120.0,
+  "median_price_oldest_age": 10700.0,
+  "model_results": {
+    "Median baseline": {"mae": 4401.466666666666, "rmse": 5764.288102908575, "r2": -0.07121627953059062},
+    "Linear regression": {"mae": 1617.0438076664777, "rmse": 2157.016916571976, "r2": 0.8499994303621131},
+    "Random forest": {"mae": 1473.2200135040885, "rmse": 2040.2441806892728, "r2": 0.8658007459719845}
+  },
+  "top_features": [
+    {"feature": "mileage", "importance": 0.4671889613920003},
+    {"feature": "brand_Ford", "importance": 0.12433134734667159},
+    {"feature": "brand_Mercedes", "importance": 0.08152889640294902},
+    {"feature": "year", "importance": 0.05001550060463804},
+    {"feature": "brand_Hyundai", "importance": 0.04995082819581627},
+    {"feature": "vehicle_age", "importance": 0.0470974912401503},
+    {"feature": "brand_BMW", "importance": 0.031568117714103054},
+    {"feature": "miles_per_year", "importance": 0.026263421584887654},
+    {"feature": "brand_Audi", "importance": 0.021559506694949656},
+    {"feature": "engineSize", "importance": 0.02104169864802199},
+    {"feature": "mpg", "importance": 0.019051478746723013},
+    {"feature": "brand_Skoda", "importance": 0.01876944894782938},
+    {"feature": "transmission_Semi-Auto", "importance": 0.01204562720433437},
+    {"feature": "transmission_Manual", "importance": 0.007832940704148495},
+    {"feature": "fuelType_Petrol", "importance": 0.002486436705308335}
+  ]
+}
