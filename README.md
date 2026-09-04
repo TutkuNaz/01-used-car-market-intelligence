@@ -1,65 +1,47 @@
 # Used Car Market Intelligence
 
-Pricing, mileage, depreciation-pattern and resale-value analysis for the UK used-car market, with SQL analysis, a reproducible Python pipeline and a price-prediction benchmark.
+A reproducible analysis of used-car pricing, mileage and depreciation patterns using Python, SQL and machine learning.
 
-> **Build status:** pipeline, tests, SQL, notebooks, figures and dashboard were validated end-to-end. The committed analytical outputs were generated on a **299-row development validation snapshot** of the source schema because the full remote dataset could not be downloaded inside the build runtime. Full-source statistics are deliberately not fabricated; `scripts/download_data.py` retrieves the complete CC0 dataset and regenerates the outputs.
+## Objective
 
-## Overview
+The project examines how vehicle age, mileage and model characteristics relate to listing prices, with a focus on resale-value benchmarking and fleet-oriented decision support.
 
-This project treats used-car pricing as a fleet economics problem rather than only a regression exercise. Vehicle acquisition cost matters, but so do mileage exposure, age, segment mix and expected resale position when vehicles leave a fleet.
+Key questions:
 
-## Business Problem
-
-A mobility or fleet operator evaluating vehicles needs a repeatable way to answer:
-
-- How does listing price vary with age and mileage?
-- Which brands and models occupy different resale-price positions?
+- How does price change across age and mileage bands?
+- Which brands and models occupy different price positions within comparable cohorts?
 - How much predictive signal is available from basic vehicle attributes?
-- Where does a simple price model make large errors, and therefore require caution?
+- Where do simple pricing models perform well or poorly?
 
-The dataset contains public used-car listings only. It is not a transaction ledger and does not measure realized resale proceeds.
-
-## Dataset
+## Data
 
 Primary source: **100,000 UK Used Car Data Set** on Kaggle.
 
 - Source: https://www.kaggle.com/datasets/adityadesai13/used-car-dataset-ford-and-mercedes
 - License: **CC0 1.0 / Public Domain**
-- Fields used: `brand`, `model`, `year`, `price`, `transmission`, `mileage`, `fuelType`, `tax`, `mpg`, `engineSize`
-- Raw data are not committed. Run `python scripts/download_data.py`.
+- Main fields: `brand`, `model`, `year`, `price`, `transmission`, `mileage`, `fuelType`, `tax`, `mpg`, `engineSize`
+- Raw data are not stored in Git. Run `python scripts/download_data.py` to retrieve the source files.
 
-See [`data/README.md`](data/README.md) for provenance and validation-scope details.
+The repository includes a small development-validation run to verify the full pipeline. Reported model metrics in this README refer to that validation run, not to the complete Kaggle dataset.
 
-## Key Questions
+See [`data/README.md`](data/README.md) for provenance and data-handling details.
 
-1. How sharply does price position change across age and mileage bands?
-2. Which brands have higher median listing prices in the observed sample?
-3. Which models rank highest within each brand after a minimum sample threshold?
-4. Can a transparent baseline be materially improved with linear and tree-based models?
-5. Which features contribute most to the tree model's predictions?
+## Approach
 
-## Methodology
-
-1. Download and consolidate manufacturer files.
-2. Standardize text and numeric types.
-3. Remove exact duplicates and clearly invalid ranges.
-4. Create `vehicle_age`, `miles_per_year` and a mileage-normalized pricing feature.
-5. Materialize a SQLite analytical table.
-6. Run SQL CTE/window/segmentation analyses.
+1. Consolidate manufacturer-level source files.
+2. Standardize categorical and numeric fields.
+3. Remove duplicates and invalid records.
+4. Engineer `vehicle_age`, `miles_per_year` and mileage-normalized pricing features.
+5. Materialize the cleaned data in SQLite.
+6. Analyze price and mileage segments with SQL.
 7. Compare a median baseline, linear regression and random forest.
-8. Save test metrics, feature importance, figures and dashboard outputs.
+8. Export model metrics, feature importance, visualizations and dashboard assets.
 
-## Tech Stack
+## Stack
 
 Python · pandas · NumPy · scikit-learn · SQLite · SQL · Matplotlib · Plotly · Streamlit · pytest · GitHub Actions
 
-## Data Cleaning
-
-The development validation run contained **299 rows**, **0 duplicate rows**, **0 null cells** and **0 rows outside the explicit validity rules**. Those are validation-snapshot metrics, not claims about the full Kaggle dataset.
-
-Validation rules are implemented in [`src/used_car_intelligence/pipeline.py`](src/used_car_intelligence/pipeline.py), not hidden in notebook cells.
-
-## Exploratory Data Analysis
+## Analysis
 
 ![Median price by brand](reports/figures/median_price_by_brand.svg)
 
@@ -67,27 +49,29 @@ Validation rules are implemented in [`src/used_car_intelligence/pipeline.py`](sr
 
 ![Median price by vehicle age](reports/figures/depreciation_curve.svg)
 
-## Key Insights — Development Validation
+In the development-validation sample:
 
-- Median listing price in the validation snapshot was **£16,520** at a median mileage of **28,277 miles**.
-- Mercedes had the highest observed brand median (**£19,470**) and Hyundai the lowest (**£11,055**) among the six brands present in the validation snapshot. This is a sample-composition result, not a universal brand-resale ranking.
-- Average prices in the SQL mileage segments declined from about **£22.1k below 15k miles** to **£11.4k above 50k miles**, while average vehicle age increased at the same time. Mileage and age therefore should not be interpreted independently without modeling controls.
-- The tree model assigns the largest feature importance to mileage in this validation run. Feature importance is predictive attribution, not a causal depreciation estimate.
+- median listing price: **£16,520**;
+- median mileage: **28,277 miles**;
+- average price declined from roughly **£22.1k** below 15k miles to **£11.4k** above 50k miles;
+- vehicle age increased across the same mileage bands, so mileage should not be interpreted independently from age.
 
-## SQL Analysis
+Brand-level medians are descriptive of the observed sample and should not be treated as universal resale rankings.
 
-The SQL layer uses real analytical queries with CTEs, `CASE WHEN`, aggregation and window functions. Executed outputs are committed in [`reports/sql_results.md`](reports/sql_results.md).
+## SQL
 
-Examples include:
+The SQL layer covers:
 
-- brand price ranking with `DENSE_RANK()`;
-- vehicle-age cohorts;
-- top models within each brand using `ROW_NUMBER()`;
+- brand price rankings with `DENSE_RANK()`;
+- age-cohort analysis;
+- model ranking within brands using `ROW_NUMBER()`;
 - mileage-band pricing segmentation.
 
-## Machine Learning
+Executed results are available in [`reports/sql_results.md`](reports/sql_results.md).
 
-The same train/test split is used for all models.
+## Modeling
+
+All models use the same train/test split.
 
 | Model | Test MAE | RMSE | R² |
 |---|---:|---:|---:|
@@ -99,47 +83,24 @@ The same train/test split is used for all models.
 
 ![Feature importance](reports/figures/feature_importance.svg)
 
-These figures validate the pipeline on the development snapshot only. The repository intentionally avoids presenting them as full-dataset performance.
+On the validation split, the random forest reduced MAE by approximately **67%** relative to the median baseline. Feature importance is used as a predictive diagnostic and is not interpreted causally.
 
-## Results
+## Business Interpretation
 
-The validation run demonstrates that structured vehicle attributes can materially outperform a naive median-price baseline. The random forest reduced MAE by roughly **67%** versus the median baseline on the fixed validation split.
-
-## Business Recommendations
-
-- Use age and mileage together when evaluating expected resale position; they are strongly entangled in listing data.
-- Compare models within similar age/mileage cohorts instead of using raw brand averages for procurement decisions.
-- Treat predicted price as a benchmark or review signal, not an automated purchase/sale decision.
-- Add service history, trim, location and realized transaction prices before using the model for operational valuation.
+- Age and mileage should be evaluated together when comparing resale position.
+- Brand averages are most useful when vehicles are compared within similar age and mileage cohorts.
+- Model predictions are better suited to benchmarking and review than automated purchase or sale decisions.
+- A production valuation model would benefit from trim, condition, service history, geography and realized transaction prices.
 
 ## Dashboard
 
-A Streamlit application is available in [`dashboard/app.py`](dashboard/app.py) for interactive filtering, KPI review and model-validation exploration.
-
-Run Streamlit with:
+The Streamlit application in [`dashboard/app.py`](dashboard/app.py) supports interactive filtering and model-result review.
 
 ```bash
 streamlit run dashboard/app.py
 ```
 
-## Repository Structure
-
-```text
-01-used-car-market-intelligence/
-├── README.md
-├── data/README.md
-├── notebooks/
-├── scripts/
-├── src/used_car_intelligence/
-├── sql/
-├── dashboard/
-├── reports/
-│   └── figures/
-├── tests/
-└── .github/workflows/ci.yml
-```
-
-## How to Run
+## Run Locally
 
 ```bash
 python -m venv .venv
@@ -148,24 +109,31 @@ pip install -r requirements.txt
 python scripts/download_data.py
 python scripts/run_analysis.py
 pytest -q
-streamlit run dashboard/app.py
 ```
 
-## Data License
+## Repository Layout
 
-The source dataset is marked **CC0 / Public Domain** by Kaggle. Repository source code and original written material are MIT licensed. The raw dataset remains outside Git history for repository hygiene and reproducibility.
+```text
+01-used-car-market-intelligence/
+├── data/
+├── notebooks/
+├── scripts/
+├── src/used_car_intelligence/
+├── sql/
+├── dashboard/
+├── reports/
+├── tests/
+└── .github/workflows/ci.yml
+```
 
 ## Limitations
 
-- Listing price is not realized sale price.
-- Dataset vintage is historical and does not represent the 2026 market.
-- Trim, condition, service history and local market supply are limited or absent.
-- The committed model metrics are from a 299-row development validation snapshot, not the complete source dataset.
-- Random train/test splitting evaluates predictive fit in the same listing population; it is not a future-market backtest.
+- Listing price is not realized transaction price.
+- The source is historical and does not represent the current market.
+- Trim, vehicle condition, service history and geography are limited or absent.
+- Published model metrics are from the development-validation sample.
+- Random train/test splitting measures fit within the observed population rather than future-market performance.
 
-## Future Improvements
+## License
 
-- Re-run and publish a versioned full-dataset benchmark in an environment with direct Kaggle access.
-- Add geographically explicit market features where licensing permits.
-- Use grouped or temporal validation if reliable listing dates become available.
-- Add model calibration/error slices by brand, model and mileage cohort.
+The source dataset is published as **CC0 / Public Domain**. Repository code and original written material are MIT licensed.
