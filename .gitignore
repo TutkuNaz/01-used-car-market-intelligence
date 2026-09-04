@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.DS_Store
+.env
+.pytest_cache/
+.ruff_cache/
+data/raw/*
+!data/raw/.gitkeep
+# Keep processed analytical outputs small; large full-dataset outputs should remain local.
