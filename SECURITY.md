@@ -8,7 +8,7 @@ Security fixes are applied to the current main branch.
 
 Please do not disclose a vulnerability in a public issue. Use the repository's private security-advisory form:
 
-https://github.com/atasardacagan/01-used-car-market-intelligence/security/advisories/new
+https://github.com/TutkuNaz/01-used-car-market-intelligence/security/advisories/new
 
 Include the affected file or workflow, reproduction steps, impact, and any suggested mitigation. Please remove credentials, personal information, and proprietary data from reports. Acknowledgement is normally provided within seven days.
 

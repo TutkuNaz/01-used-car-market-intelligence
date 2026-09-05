@@ -1,12 +1,12 @@
 # Used Car Market Intelligence
 
-[![CI](https://github.com/atasardacagan/01-used-car-market-intelligence/actions/workflows/ci.yml/badge.svg)](https://github.com/atasardacagan/01-used-car-market-intelligence/actions/workflows/ci.yml)
+[![CI](https://github.com/TutkuNaz/01-used-car-market-intelligence/actions/workflows/ci.yml/badge.svg)](https://github.com/TutkuNaz/01-used-car-market-intelligence/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 A reproducible Python, SQL, and machine-learning analysis of historical UK used-car pricing, mileage, and depreciation patterns.
 
-Part of the [Automotive Open Data Hub](https://github.com/atasardacagan/automotive-data-portfolio), a curated collection of automotive datasets and reproducible starter analyses.
+Part of the [Automotive Open Data Hub](https://github.com/TutkuNaz/automotive-data-portfolio), a curated collection of automotive datasets and reproducible starter analyses.
 
 ## What this project answers
 
