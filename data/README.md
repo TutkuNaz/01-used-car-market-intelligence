@@ -2,15 +2,16 @@
 
 ## Primary dataset
 
-**100,000 UK Used Car Data Set** by Aditya Desai (Kaggle), based on scraped UK used-car listings.
+The project uses the **100,000 UK Used Car Data Set** by Aditya Desai on Kaggle, based on historical UK used-car listings.
 
 - Source: https://www.kaggle.com/datasets/adityadesai13/used-car-dataset-ford-and-mercedes
-- License: **CC0 1.0 / Public Domain** as displayed by Kaggle.
-- Core fields: `model`, `year`, `price`, `transmission`, `mileage`, `fuelType`, `tax`, `mpg`, `engineSize`.
-- This repository adds `brand` while consolidating manufacturer files.
-- Retrieval workflow: `python scripts/download_data.py`.
-- Raw data are deliberately excluded from Git history even though CC0 permits redistribution. This keeps clones small and makes source provenance explicit.
+- License: CC0 1.0 / Public Domain, as displayed by Kaggle
+- Core fields: model, year, price, transmission, mileage, fuelType, tax, mpg, engineSize
+- Repository-added field: brand, derived while consolidating manufacturer files
+- Retrieval command: python scripts/download_data.py
 
-## Development validation
+Raw files are excluded from Git to keep clones small and make the retrieval boundary explicit. Review the upstream source and license before redistribution.
 
-The repository was quality-checked in the build environment with a 299-row development snapshot derived from the same schema. Figures and metrics committed in `reports/` are explicitly labeled as **development validation outputs** and must not be interpreted as full-dataset statistics. Running the documented download and analysis commands regenerates all outputs from the full source dataset.
+## Reproducibility
+
+Running python scripts/download_data.py followed by python scripts/run_analysis.py rebuilds the cleaned CSV, SQLite database, SQL report, model diagnostics, metrics, and SVG figures. The small report assets committed to the repository are an illustrative project snapshot; newly generated statistics reflect the exact upstream files available at retrieval time.

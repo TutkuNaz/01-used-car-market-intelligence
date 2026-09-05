@@ -1,47 +1,37 @@
 # Used Car Market Intelligence
 
-A reproducible analysis of used-car pricing, mileage and depreciation patterns using Python, SQL and machine learning.
+[![CI](https://github.com/atasardacagan/01-used-car-market-intelligence/actions/workflows/ci.yml/badge.svg)](https://github.com/atasardacagan/01-used-car-market-intelligence/actions/workflows/ci.yml)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-## Objective
+A reproducible Python, SQL, and machine-learning analysis of historical UK used-car pricing, mileage, and depreciation patterns.
 
-The project examines how vehicle age, mileage and model characteristics relate to listing prices, with a focus on resale-value benchmarking and fleet-oriented decision support.
+Part of the [Automotive Open Data Hub](https://github.com/atasardacagan/automotive-data-portfolio), a curated collection of automotive datasets and reproducible starter analyses.
 
-Key questions:
+## What this project answers
 
-- How does price change across age and mileage bands?
-- Which brands and models occupy different price positions within comparable cohorts?
-- How much predictive signal is available from basic vehicle attributes?
-- Where do simple pricing models perform well or poorly?
+- How do listing prices change across vehicle-age and mileage cohorts?
+- Which brands and models occupy different price positions within comparable samples?
+- How much predictive signal is available from common listing attributes?
+- Where do straightforward pricing models outperform a median baseline?
 
 ## Data
 
-Primary source: **100,000 UK Used Car Data Set** on Kaggle.
+Primary source: [100,000 UK Used Car Data Set](https://www.kaggle.com/datasets/adityadesai13/used-car-dataset-ford-and-mercedes), published on Kaggle under CC0 1.0 / Public Domain.
 
-- Source: https://www.kaggle.com/datasets/adityadesai13/used-car-dataset-ford-and-mercedes
-- License: **CC0 1.0 / Public Domain**
-- Main fields: `brand`, `model`, `year`, `price`, `transmission`, `mileage`, `fuelType`, `tax`, `mpg`, `engineSize`
-- Raw data are not stored in Git. Run `python scripts/download_data.py` to retrieve the source files.
+The source provides manufacturer-level CSV files with model, year, price, transmission, mileage, fuel type, tax, fuel economy, and engine size. Raw files are downloaded locally and are not committed to Git. See [data/README.md](data/README.md) for provenance and handling details.
 
-The repository includes a small development-validation run to verify the full pipeline. Reported model metrics in this README refer to that validation run, not to the complete Kaggle dataset.
+## Analytical workflow
 
-See [`data/README.md`](data/README.md) for provenance and data-handling details.
+1. Download and consolidate the manufacturer source files.
+2. Validate the required schema, normalize values, and remove invalid rows and exact duplicates.
+3. Engineer vehicle age, miles per year, and mileage-normalized price features.
+4. Materialize the cleaned data in both CSV and indexed SQLite formats.
+5. Execute the version-controlled business queries and export their results to Markdown.
+6. Compare a median baseline, linear regression, and random forest on one deterministic split.
+7. Export metrics, predictions, feature importance, and SVG figures.
 
-## Approach
-
-1. Consolidate manufacturer-level source files.
-2. Standardize categorical and numeric fields.
-3. Remove duplicates and invalid records.
-4. Engineer `vehicle_age`, `miles_per_year` and mileage-normalized pricing features.
-5. Materialize the cleaned data in SQLite.
-6. Analyze price and mileage segments with SQL.
-7. Compare a median baseline, linear regression and random forest.
-8. Export model metrics, feature importance, visualizations and dashboard assets.
-
-## Stack
-
-Python · pandas · NumPy · scikit-learn · SQLite · SQL · Matplotlib · Plotly · Streamlit · pytest · GitHub Actions
-
-## Analysis
+## Example outputs
 
 ![Median price by brand](reports/figures/median_price_by_brand.svg)
 
@@ -49,91 +39,74 @@ Python · pandas · NumPy · scikit-learn · SQLite · SQL · Matplotlib · Plot
 
 ![Median price by vehicle age](reports/figures/depreciation_curve.svg)
 
-In the development-validation sample:
+The committed assets are an illustrative development snapshot. Brand medians are descriptive of the observed data and are not universal resale rankings. Age and mileage are correlated, so neither should be interpreted independently or causally.
 
-- median listing price: **£16,520**;
-- median mileage: **28,277 miles**;
-- average price declined from roughly **£22.1k** below 15k miles to **£11.4k** above 50k miles;
-- vehicle age increased across the same mileage bands, so mileage should not be interpreted independently from age.
+## SQL analysis
 
-Brand-level medians are descriptive of the observed sample and should not be treated as universal resale rankings.
-
-## SQL
-
-The SQL layer covers:
-
-- brand price rankings with `DENSE_RANK()`;
-- age-cohort analysis;
-- model ranking within brands using `ROW_NUMBER()`;
-- mileage-band pricing segmentation.
-
-Executed results are available in [`reports/sql_results.md`](reports/sql_results.md).
+The SQLite layer includes brand price rankings, age-cohort analysis, within-brand model rankings, and mileage-band segmentation. The pipeline executes [sql/business_analysis.sql](sql/business_analysis.sql) and regenerates [reports/sql_results.md](reports/sql_results.md), so the published SQL output remains tied to executable queries.
 
 ## Modeling
 
-All models use the same train/test split.
-
-| Model | Test MAE | RMSE | R² |
-|---|---:|---:|---:|
-| Median baseline | £4,401 | £5,764 | -0.071 |
-| Linear regression | £1,617 | £2,157 | 0.850 |
-| Random forest | **£1,473** | **£2,040** | **0.866** |
+All models use the same deterministic train/test split. The repository compares a robust baseline with linear and nonlinear estimators and records MAE, RMSE, and R². Feature importance is provided as a predictive diagnostic, not a causal explanation.
 
 ![Model comparison](reports/figures/model_mae.svg)
 
 ![Feature importance](reports/figures/feature_importance.svg)
 
-On the validation split, the random forest reduced MAE by approximately **67%** relative to the median baseline. Feature importance is used as a predictive diagnostic and is not interpreted causally.
+Use the estimates for benchmarking and analyst review rather than automated purchase or sale decisions. A production valuation system would also require trim, condition, service history, geography, time-aware validation, and realized transaction prices.
 
-## Business Interpretation
+## Run locally
 
-- Age and mileage should be evaluated together when comparing resale position.
-- Brand averages are most useful when vehicles are compared within similar age and mileage cohorts.
-- Model predictions are better suited to benchmarking and review than automated purchase or sale decisions.
-- A production valuation model would benefit from trim, condition, service history, geography and realized transaction prices.
+    python -m venv .venv
+    source .venv/bin/activate
+    python -m pip install -r requirements.txt
+    python scripts/download_data.py
+    python scripts/run_analysis.py
+    python -m pytest -q
+
+Windows activation: .venv\Scripts\activate
+
+The analysis command creates missing output directories automatically and writes:
+
+- data/processed/used_cars_clean.csv
+- data/processed/used_cars.sqlite
+- reports/sql_results.md
+- reports/metrics.json
+- reports/model_predictions.csv
+- reports/feature_importance.csv
+- five SVG figures in reports/figures
 
 ## Dashboard
 
-The Streamlit application in [`dashboard/app.py`](dashboard/app.py) supports interactive filtering and model-result review.
+Launch the Streamlit explorer after generating the processed data:
 
-```bash
-streamlit run dashboard/app.py
-```
+    streamlit run dashboard/app.py
 
-## Run Locally
+## Repository layout
 
-```bash
-python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-python scripts/download_data.py
-python scripts/run_analysis.py
-pytest -q
-```
+    01-used-car-market-intelligence/
+    ├── data/                 # provenance plus local raw/processed boundaries
+    ├── notebooks/            # exploratory analysis
+    ├── scripts/              # data retrieval and pipeline entry point
+    ├── src/used_car_intelligence/
+    ├── sql/                  # executable business queries
+    ├── dashboard/            # Streamlit application
+    ├── reports/              # compact reference outputs
+    ├── tests/                # unit and fresh-directory integration tests
+    └── .github/              # CI and dependency updates
 
-## Repository Layout
+## Reproducibility and limitations
 
-```text
-01-used-car-market-intelligence/
-├── data/
-├── notebooks/
-├── scripts/
-├── src/used_car_intelligence/
-├── sql/
-├── dashboard/
-├── reports/
-├── tests/
-└── .github/workflows/ci.yml
-```
+- The upstream data are historical listings, not current market quotes or realized transactions.
+- Raw files are intentionally excluded; upstream availability and content can change.
+- A random split measures fit within the observed population, not future-market performance.
+- Missing trim, condition, service-history, and geographic variables constrain interpretation.
+- CI tests Python 3.11 and 3.12, including a complete synthetic-data run from a fresh directory.
 
-## Limitations
+## Contributing and security
 
-- Listing price is not realized transaction price.
-- The source is historical and does not represent the current market.
-- Trim, vehicle condition, service history and geography are limited or absent.
-- Published model metrics are from the development-validation sample.
-- Random train/test splitting measures fit within the observed population rather than future-market performance.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the validation checklist. Report vulnerabilities privately using [SECURITY.md](SECURITY.md).
 
 ## License
 
-The source dataset is published as **CC0 / Public Domain**. Repository code and original written material are MIT licensed.
+Repository code and original written material are MIT licensed. The upstream dataset is separately published as CC0 / Public Domain; consult the source page for its current terms.

@@ -6,6 +6,12 @@ __pycache__/
 .env
 .pytest_cache/
 .ruff_cache/
+
+# Source data are downloaded locally.
 data/raw/*
 !data/raw/.gitkeep
-# Keep processed analytical outputs small; large full-dataset outputs should remain local.
+
+# Reproducible generated data and local-only intermediates.
+data/processed/
+reports/model_predictions.csv
+reports/figures/*.png
